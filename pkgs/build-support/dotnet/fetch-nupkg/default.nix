@@ -17,13 +17,25 @@ lib.makeOverridable (
     hash ? "",
     url ? "https://www.nuget.org/api/v2/package/${pname}/${version}",
     installable ? false,
+    nugetUser ? null,
+    nugetPass ? null
   }:
   let
+    mkNetrcFromNuGetConfig = {url, nugetUser, nugetPass}:
+      if nugetUser == null then null else
+      let
+        matches = builtins.elemAt (builtins.split "https?://([a-zA-Z0-9.]+)" url) 1;
+        nugetHost = builtins.elemAt matches 0;
+      in
+        ''
+          echo "machine ${nugetHost} login ${nugetUser} password ${nugetPass}" > $PWD/netrc
+        '';
     package = stdenvNoCC.mkDerivation rec {
       inherit pname version;
 
       src = fetchurl {
         name = "${pname}.${version}.nupkg";
+        netrcPhase = mkNetrcFromNuGetConfig { inherit url nugetUser nugetPass; };
         # There is no need to verify whether both sha256 and hash are
         # valid here, because nuget-to-nix does not generate a deps.nix
         # containing both.

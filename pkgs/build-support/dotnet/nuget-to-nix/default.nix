@@ -10,12 +10,13 @@
 , gnugrep
 , gawk
 , cacert
+, nugetConfig ? ""
 }:
 
 runCommandLocal "nuget-to-nix" {
   script = substituteAll {
     src = ./nuget-to-nix.sh;
-    inherit runtimeShell cacert;
+    inherit runtimeShell cacert nugetConfig;
 
     binPath = lib.makeBinPath [
       nix

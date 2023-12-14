@@ -207,6 +207,7 @@ stdenvNoCC.mkDerivation (
       runtimeId
       meta
       dotnet-sdk
+      nugetConfig
       ;
     args'' = removeAttrs args' [
       "nugetDeps"

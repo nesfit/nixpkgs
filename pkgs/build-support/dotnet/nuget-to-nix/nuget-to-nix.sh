@@ -28,6 +28,8 @@ wait "$!"
 declare -a remote_sources
 declare -A base_addresses
 
+nuget_config_path="@nugetConfig@"
+
 for index in "${sources[@]}"; do
     if [[ -d "$index" ]]; then
         continue
@@ -95,7 +97,15 @@ for package in *; do
     fi
 
     if [[ "$source" != https://api.nuget.org/v3/index.json ]]; then
-      echo "  (fetchNuGet { pname = \"$id\"; version = \"$version\"; hash = \"$hash\"; url = \"$url\"; })"
+      if [ $nuget_config_path ]; then
+        NUGET_NAME="$(xq -r '.configuration.packageSources.add[] | select(.["@value"] == "'$source'").["@key"]' ${nuget_config_path})"
+        if [ $NUGET_NAME ]; then
+          NUGET_USER="$(xq -r '.configuration.packageSourceCredentials.["'$NUGET_NAME'"].add[] | select(.["@key"] == "Username").["@value"]' ${nuget_config_path})"
+          NUGET_PASS="$(xq -r '.configuration.packageSourceCredentials.["'$NUGET_NAME'"].add[] | select(.["@key"] == "ClearTextPassword").["@value"]' ${nuget_config_path})"
+          nuget_config_param="nugetUser = \"$NUGET_USER\"; nugetPass = \"$NUGET_PASS\"; "
+        fi
+      fi
+      echo "  (fetchNuGet { pname = \"$id\"; version = \"$version\"; hash = \"$hash\"; url = \"$url\"; $nuget_config_param})"
     else
       echo "  (fetchNuGet { pname = \"$id\"; version = \"$version\"; hash = \"$hash\"; })"
     fi
