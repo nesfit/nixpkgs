@@ -10,12 +10,13 @@
 , gnugrep
 , gawk
 , dotnet-sdk
+, nugetConfig ? ""
 }:
 
 runCommandLocal "nuget-to-nix" {
   script = substituteAll {
     src = ./nuget-to-nix.sh;
-    inherit runtimeShell;
+    inherit runtimeShell nugetConfig;
 
     binPath = lib.makeBinPath [
       nix
