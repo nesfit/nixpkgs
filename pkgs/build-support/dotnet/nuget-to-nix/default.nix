@@ -10,6 +10,7 @@
 , gnugrep
 , gawk
 , dotnet-sdk
+, findutils
 , nugetConfig ? ""
 }:
 
@@ -27,6 +28,7 @@ runCommandLocal "nuget-to-nix" {
       gnugrep
       gawk
       dotnet-sdk
+      findutils
     ];
   };
 
