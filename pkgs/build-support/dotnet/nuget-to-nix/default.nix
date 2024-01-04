@@ -9,7 +9,9 @@
 , curl
 , gnugrep
 , gawk
+, dotnet-sdk
 , cacert
+, findutils
 , nugetConfig ? ""
 }:
 
@@ -26,6 +28,8 @@ runCommandLocal "nuget-to-nix" {
       curl
       gnugrep
       gawk
+      dotnet-sdk
+      findutils
     ];
   };
 
