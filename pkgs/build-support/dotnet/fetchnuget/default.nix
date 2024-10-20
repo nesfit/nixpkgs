@@ -7,8 +7,21 @@ attrs @
 , sha256 ? ""
 , hash ? ""
 , md5 ? ""
+, nugetUser ? null
+, nugetPass ? null
 , ...
 }:
+let
+  mkNetrcFromNuGetConfig = {url, nugetUser, nugetPass}:
+    if nugetUser == null then null else
+    let
+      matches = builtins.elemAt (builtins.split "https?://([a-zA-Z0-9.]+)" url) 1;
+      nugetHost = builtins.elemAt matches 0;
+    in
+      ''
+        echo "machine ${nugetHost} login ${nugetUser} password ${nugetPass}" > $PWD/netrc
+      '';
+in
 if md5 != "" then
   throw "fetchnuget does not support md5 anymore, please use 'hash' attribute with SRI hash"
 # This is also detected in fetchurl, but we just throw here to avoid confusion
@@ -19,6 +32,7 @@ else
     src = fetchurl {
       inherit url sha256 hash;
       name = "${pname}.${version}.zip";
+      netrcPhase = mkNetrcFromNuGetConfig { inherit url nugetUser nugetPass; };
     };
 
     sourceRoot = ".";
