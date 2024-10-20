@@ -12,6 +12,7 @@
 , dotnet-sdk
 , cacert
 , findutils
+, yq
 , nugetConfig ? ""
 }:
 
@@ -30,6 +31,7 @@ runCommandLocal "nuget-to-nix" {
       gawk
       dotnet-sdk
       findutils
+      yq
     ];
   };
 
