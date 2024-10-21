@@ -215,9 +215,9 @@ for package in *; do
     else      
       nuget_config_param=$(get_nuget_config_param $source $nuget_config_path)
       if [[ -z ${nuget_config_param} ]]; then # unauthenticated package source
-        echo "  (fetchNuGet { pname = \"$id\"; version = \"$version\"; sha256 = \"$hash\"; url = \"$package_content_url\"; })"
+        echo "  (fetchNuGet { pname = \"$id\"; version = \"$version\"; hash = \"$hash\"; url = \"$package_content_url\"; })"
       else # authenticated package source
-        echo "  (fetchNuGet { pname = \"$id\"; version = \"$version\"; sha256 = \"$hash\"; url = \"$package_content_url\"; $nuget_config_param })"
+        echo "  (fetchNuGet { pname = \"$id\"; version = \"$version\"; hash = \"$hash\"; url = \"$package_content_url\"; $nuget_config_param })"
       fi
     fi 
     
